@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.name }} - Vietnam-Myanmar Shop</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <!-- Navigation -->
+        <div class="mb-6">
+            <a href="/category/{{ product.category_id }}" class="text-blue-500 hover:text-blue-700">← Back to Category</a>
+        </div>
+        
+        <!-- Product Detail -->
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <div class="md:flex">
+                <!-- Image -->
+                <div class="md:w-1/2 bg-gray-100 flex items-center justify-center p-8">
+                    {% if product.image_url %}
+                    <img src="{{ product.image_url }}" alt="{{ product.name }}" class="max-w-full h-auto rounded">
+                    {% else %}
+                    <span class="text-gray-400 text-6xl">📷</span>
+                    {% endif %}
+                </div>
+                
+                <!-- Info -->
+                <div class="p-6 md:w-1/2">
+                    <h1 class="text-2xl font-bold text-gray-800 mb-2">{{ product.name }}</h1>
+                    <p class="text-gray-600 mb-4">{{ product.description }}</p>
+                    
+                    <div class="mb-4">
+                        {% if product.price_mmk %}
+                        <span class="text-3xl font-bold text-blue-600">{{ product.price_mmk }} MMK</span>
+                        {% endif %}
+                        {% if product.price_vnd %}
+                        <span class="text-xl text-gray-500 ml-2">{{ product.price_vnd }} VND</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-4 text-sm text-gray-500 space-y-1">
+                        <p>📦 Weight: {{ product.weight_kg or 0.5 }} kg</p>
+                        <p>✈️ Shipping: Myanmar Air Cargo (3-5 days)</p>
+                        <p>📍 Origin: {{ 'Vietnam' if product.origin == 'vietnam' else 'Myanmar' }}</p>
+                    </div>
+                    
+                    <!-- Order Form -->
+                    <form action="/order" method="POST" class="mt-6 space-y-3">
+                        <input type="hidden" name="product_id" value="{{ product.id }}">
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Your Name *</label>
+                            <input type="text" name="name" required class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+                            <input type="email" name="email" required class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Phone *</label>
+                            <input type="tel" name="phone" required class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">City *</label>
+                            <input type="text" name="city" required class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Country *</label>
+                            <select name="country" required class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500">
+                                <option value="myanmar">🇲🇲 Myanmar (for clothing delivery)</option>
+                                <option value="vietnam">🇻🇳 Vietnam (for food delivery)</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Quantity *</label>
+                            <input type="number" name="quantity" value="1" min="1" required class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Payment Method *</label>
+                            <select name="payment_method" required class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500">
+                                <option value="bank">🏦 Bank Transfer</option>
+                                <option value="wave">📱 Wave Money (Myanmar)</option>
+                                <option value="kbz">💳 KBZ Pay (Myanmar)</option>
+                                <option value="vietqr">🇻🇳 VietQR (Vietnam)</option>
+                            </select>
+                        </div>
+                        
+                        <input type="hidden" name="total" value="{{ product.price_mmk or product.price_vnd or 0 }}">
+                        
+                        <button type="submit" class="w-full bg-green-500 text-white py-3 rounded-lg hover:bg-green-600 font-semibold mt-4">
+                            Place Order
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

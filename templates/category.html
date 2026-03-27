@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ category.name }} - Vietnam-Myanmar Shop</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Navigation -->
+        <div class="mb-6">
+            <a href="/" class="text-blue-500 hover:text-blue-700">← Back to Home</a>
+        </div>
+        
+        <!-- Category Header -->
+        <div class="flex items-center gap-3 mb-8">
+            <span class="text-5xl">{{ category.icon or '📦' }}</span>
+            <h1 class="text-3xl font-bold text-gray-800">{{ category.name }}</h1>
+        </div>
+        
+        <!-- Products Grid -->
+        {% if products %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {% for product in products %}
+            <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
+                <div class="h-48 bg-gray-200 flex items-center justify-center">
+                    {% if product.image_url %}
+                    <img src="{{ product.image_url }}" alt="{{ product.name }}" class="w-full h-full object-cover">
+                    {% else %}
+                    <span class="text-gray-400">📷 No image</span>
+                    {% endif %}
+                </div>
+                <div class="p-4">
+                    <h3 class="font-semibold text-lg text-gray-800 mb-2">{{ product.name }}</h3>
+                    <p class="text-gray-600 text-sm mb-3">{{ product.description[:80] }}{% if product.description|length > 80 %}...{% endif %}</p>
+                    <div class="flex justify-between items-center">
+                        <div>
+                            {% if product.price_mmk %}
+                            <span class="text-lg font-bold text-blue-600">{{ product.price_mmk }} MMK</span>
+                            {% endif %}
+                            {% if product.price_vnd %}
+                            <span class="text-sm text-gray-500 ml-1">{{ product.price_vnd }} VND</span>
+                            {% endif %}
+                        </div>
+                        <a href="/product/{{ product.slug }}" 
+                           class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 text-sm">
+                            View
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="bg-white rounded-lg shadow-md p-12 text-center">
+            <p class="text-gray-500">No products in this category yet. Check back soon!</p>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
