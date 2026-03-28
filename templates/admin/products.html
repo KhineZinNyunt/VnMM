@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Products - Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-8">
+            <div>
+                <h1 class="text-3xl font-bold">Manage Products</h1>
+                <p class="text-gray-600">Add, edit, or remove products from your store</p>
+            </div>
+            <div class="flex gap-3">
+                <a href="/admin" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+                    <i class="fas fa-chart-line"></i> Dashboard
+                </a>
+                <a href="/admin/logout" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </div>
+        
+        <!-- Navigation Tabs -->
+        <div class="flex gap-2 mb-8 border-b">
+            <a href="/admin" class="px-4 py-2 text-gray-600 hover:text-blue-600">Dashboard</a>
+            <a href="/admin/products" class="px-4 py-2 text-blue-600 border-b-2 border-blue-600 font-semibold">Products</a>
+            <a href="/admin/orders" class="px-4 py-2 text-gray-600 hover:text-blue-600">Orders</a>
+            <a href="/admin/categories" class="px-4 py-2 text-gray-600 hover:text-blue-600">Categories</a>
+            <a href="/admin/customers" class="px-4 py-2 text-gray-600 hover:text-blue-600">Customers</a>
+        </div>
+        
+        <!-- Add Product Form -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <h2 class="text-xl font-bold mb-4">
+                <i class="fas fa-plus-circle text-green-500"></i> Add New Product
+            </h2>
+            <form method="POST" action="/admin/products/add" enctype="multipart/form-data" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium mb-1">Product Image</label>
+                    <input type="file" name="image" accept="image/*" class="w-full p-2 border rounded">
+                    <p class="text-xs text-gray-500 mt-1">Upload JPG, PNG, or GIF. Max 5MB.</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Product Name *</label>
+                    <input type="text" name="name" required class="w-full p-2 border rounded">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Category</label>
+                    <select name="category_id" class="w-full p-2 border rounded">
+                        <option value="">Select Category</option>
+                        {% for cat in categories %}
+                        <option value="{{ cat.id }}">{{ cat.name }} {{ cat.icon }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium mb-1">Description</label>
+                    <textarea name="description" rows="3" class="w-full p-2 border rounded"></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Price (MMK) - for Myanmar customers</label>
+                    <input type="number" name="price_mmk" step="0.01" class="w-full p-2 border rounded">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Price (VND) - for Vietnam customers</label>
+                    <input type="number" name="price_vnd" step="0.01" class="w-full p-2 border rounded">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Weight (kg)</label>
+                    <input type="number" name="weight_kg" step="0.1" value="0.5" class="w-full p-2 border rounded">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Stock Quantity</label>
+                    <input type="number" name="stock" value="10" class="w-full p-2 border rounded">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Origin *</label>
+                    <select name="origin" required class="w-full p-2 border rounded">
+                        <option value="vietnam">Vietnam (sold to Myanmar customers)</option>
+                        <option value="myanmar">Myanmar (sold to Vietnam customers)</option>
+                    </select>
+                </div>
+                <div class="md:col-span-2">
+                    <button type="submit" class="bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600">
+                        <i class="fas fa-save"></i> Add Product
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Products List -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-xl font-bold mb-4">
+                <i class="fas fa-boxes"></i> All Products
+            </h2>
+            
+            {% if products %}
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="border-b">
+                            <th class="text-left py-3">Image</th>
+                            <th class="text-left py-3">Name</th>
+                            <th class="text-left py-3">Category</th>
+                            <th class="text-left py-3">Price (MMK)</th>
+                            <th class="text-left py-3">Origin</th>
+                            <th class="text-left py-3">Stock</th>
+                            <th class="text-left py-3">Actions</th>
+                          </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in products %}
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="py-3">
+                                {% if product.image_url %}
+                                <img src="{{ product.image_url }}" alt="{{ product.name }}" class="w-12 h-12 object-cover rounded">
+                                {% else %}
+                                <div class="w-12 h-12 bg-gray-200 rounded flex items-center justify-center">
+                                    <i class="fas fa-image text-gray-400"></i>
+                                </div>
+                                {% endif %}
+                            </td>
+                            <td class="py-3 font-medium">{{ product.name }}</td>
+                            <td class="py-3">{{ product.category_id }}</td>
+                            <td class="py-3">{{ product.price_mmk or '-' }}</td>
+                            <td class="py-3">
+                                <span class="px-2 py-1 rounded text-xs {% if product.origin == 'vietnam' %}bg-red-100 text-red-800{% else %}bg-green-100 text-green-800{% endif %}">
+                                    {{ product.origin }}
+                                </span>
+                            </td>
+                            <td class="py-3">{{ product.stock or 0 }}</td>
+                            <td class="py-3">
+                                <a href="/admin/products/edit/{{ product.id }}" class="text-blue-500 hover:text-blue-700 mr-3">
+                                    <i class="fas fa-edit"></i> Edit
+                                </a>
+                                <a href="/admin/products/delete/{{ product.id }}" 
+                                   onclick="return confirm('Delete this product?')"
+                                   class="text-red-500 hover:text-red-700">
+                                    <i class="fas fa-trash"></i> Delete
+                                </a>
+                            </td>
+                          </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-gray-500 text-center py-8">No products yet. Add your first product above!</p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

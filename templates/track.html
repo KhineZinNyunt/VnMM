@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Order - Vietnam-Myanmar Shop</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8 max-w-2xl">
+        <div class="text-center mb-8">
+            <a href="/" class="text-blue-500 hover:underline">← Back to Shop</a>
+            <h1 class="text-3xl font-bold mt-4">Track Your Order</h1>
+            <p class="text-gray-600">Enter your order number to check status</p>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <form action="/track" method="GET" class="mb-6">
+                <div class="flex gap-3">
+                    <input type="text" name="order_number" required 
+                           placeholder="e.g., ORD-20240101123456"
+                           class="flex-1 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <button type="submit" class="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600">
+                        <i class="fas fa-search"></i> Track
+                    </button>
+                </div>
+            </form>
+            
+            <div class="text-center text-sm text-gray-500">
+                <i class="fas fa-question-circle"></i>
+                Don't have your order number? Check your email confirmation or 
+                <a href="/account" class="text-blue-500 hover:underline">login to your account</a>
+            </div>
+        </div>
+        
+        <!-- How to Find Order Number -->
+        <div class="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <h3 class="font-semibold text-blue-800 mb-2">How to find your order number:</h3>
+            <ul class="text-sm text-gray-600 space-y-2">
+                <li><i class="fas fa-envelope text-blue-500"></i> Check your email confirmation</li>
+                <li><i class="fas fa-user text-blue-500"></i> Login to your account and view order history</li>
+                <li><i class="fas fa-phone text-blue-500"></i> Contact us with your email address</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

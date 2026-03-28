@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Customers - Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-8">
+            <div>
+                <h1 class="text-3xl font-bold">Manage Customers</h1>
+                <p class="text-gray-600">View and manage registered customers</p>
+            </div>
+            <div class="flex gap-3">
+                <a href="/admin" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+                    <i class="fas fa-chart-line"></i> Dashboard
+                </a>
+                <a href="/admin/logout" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </div>
+        
+        <!-- Navigation Tabs -->
+        <div class="flex gap-2 mb-8 border-b">
+            <a href="/admin" class="px-4 py-2 text-gray-600 hover:text-blue-600">Dashboard</a>
+            <a href="/admin/products" class="px-4 py-2 text-gray-600 hover:text-blue-600">Products</a>
+            <a href="/admin/orders" class="px-4 py-2 text-gray-600 hover:text-blue-600">Orders</a>
+            <a href="/admin/categories" class="px-4 py-2 text-gray-600 hover:text-blue-600">Categories</a>
+            <a href="/admin/customers" class="px-4 py-2 text-blue-600 border-b-2 border-blue-600 font-semibold">Customers</a>
+        </div>
+        
+        <!-- Stats Summary -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">Total Customers</p>
+                        <p class="text-3xl font-bold">{{ customers|length }}</p>
+                    </div>
+                    <i class="fas fa-users text-4xl text-blue-400"></i>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">Total Orders</p>
+                        <p class="text-3xl font-bold">{{ customers|sum(attribute='order_count') }}</p>
+                    </div>
+                    <i class="fas fa-shopping-cart text-4xl text-green-400"></i>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">Total Revenue</p>
+                        <p class="text-3xl font-bold text-green-600">{{ "%.0f"|format(customers|sum(attribute='total_spent')) }} MMK</p>
+                    </div>
+                    <i class="fas fa-dollar-sign text-4xl text-yellow-400"></i>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Customers Table -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-xl font-bold mb-4">
+                <i class="fas fa-users"></i> All Customers
+            </h2>
+            
+            {% if customers %}
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="border-b bg-gray-50">
+                            <th class="text-left py-3 px-2">Name</th>
+                            <th class="text-left py-3 px-2">Email</th>
+                            <th class="text-left py-3 px-2">Phone</th>
+                            <th class="text-left py-3 px-2">City</th>
+                            <th class="text-left py-3 px-2">Country</th>
+                            <th class="text-center py-3 px-2">Orders</th>
+                            <th class="text-right py-3 px-2">Total Spent</th>
+                            <th class="text-left py-3 px-2">Joined</th>
+                            <th class="text-left py-3 px-2">Actions</th>
+                         </tr>
+                    </thead>
+                    <tbody>
+                        {% for customer in customers %}
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="py-3 px-2 font-medium">{{ customer.full_name }}</td>
+                            <td class="py-3 px-2 text-sm">{{ customer.email }}</td>
+                            <td class="py-3 px-2 text-sm">{{ customer.phone or '-' }}</td>
+                            <td class="py-3 px-2 text-sm">{{ customer.city or '-' }}</td>
+                            <td class="py-3 px-2">
+                                {% if customer.country == 'vietnam' %}
+                                <span class="px-2 py-1 rounded text-xs bg-green-100 text-green-800">🇻🇳 Vietnam</span>
+                                {% elif customer.country == 'myanmar' %}
+                                <span class="px-2 py-1 rounded text-xs bg-blue-100 text-blue-800">🇲🇲 Myanmar</span>
+                                {% else %}
+                                <span class="text-gray-400">-</span>
+                                {% endif %}
+                            </td>
+                            <td class="py-3 px-2 text-center">{{ customer.order_count }}</td>
+                            <td class="py-3 px-2 text-right font-semibold">{{ "%.0f"|format(customer.total_spent) }} MMK</td>
+                            <td class="py-3 px-2 text-sm">{{ customer.created_at[:10] if customer.created_at else '-' }}</td>
+                            <td class="py-3 px-2">
+                                <button onclick="viewCustomerOrders('{{ customer.id }}', '{{ customer.full_name }}')" 
+                                        class="bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600">
+                                    <i class="fas fa-eye"></i> Orders
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-gray-500 text-center py-8">No customers registered yet.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Customer Orders Modal -->
+    <div id="ordersModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-2xl">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold" id="modalCustomerName">Customer Orders</h3>
+                <button onclick="closeOrdersModal()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="customerOrdersList" class="max-h-96 overflow-y-auto">
+                <p class="text-gray-500 text-center py-4">Loading...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function viewCustomerOrders(customerId, customerName) {
+            const modal = document.getElementById('ordersModal');
+            const modalTitle = document.getElementById('modalCustomerName');
+            const ordersList = document.getElementById('customerOrdersList');
+            
+            modalTitle.textContent = `${customerName}'s Orders`;
+            ordersList.innerHTML = '<p class="text-gray-500 text-center py-4">Loading orders...</p>';
+            modal.classList.remove('hidden');
+            
+            try {
+                // Fetch orders from your API (you'll need to create this endpoint)
+                const response = await fetch(`/admin/customers/${customerId}/orders`);
+                const orders = await response.json();
+                
+                if (orders.length === 0) {
+                    ordersList.innerHTML = '<p class="text-gray-500 text-center py-4">No orders yet.</p>';
+                } else {
+                    ordersList.innerHTML = `
+                        <table class="w-full text-sm">
+                            <thead>
+                                <tr class="border-b">
+                                    <th class="text-left py-2">Order #</th>
+                                    <th class="text-left py-2">Product</th>
+                                    <th class="text-left py-2">Amount</th>
+                                    <th class="text-left py-2">Status</th>
+                                    <th class="text-left py-2">Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${orders.map(order => `
+                                    <tr class="border-b">
+                                        <td class="py-2 font-mono">${order.order_number}</td>
+                                        <td class="py-2">${order.products?.name || '-'}</td>
+                                        <td class="py-2">${order.total_amount} MMK</td>
+                                        <td class="py-2">
+                                            <span class="px-2 py-1 rounded text-xs 
+                                                ${order.status === 'pending' ? 'bg-yellow-200' : 
+                                                  order.status === 'confirmed' ? 'bg-blue-200' : 
+                                                  order.status === 'shipped' ? 'bg-purple-200' : 
+                                                  order.status === 'delivered' ? 'bg-green-200' : 'bg-gray-200'}">
+                                                ${order.status}
+                                            </span>
+                                        </td>
+                                        <td class="py-2">${order.created_at?.slice(0,10) || '-'}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    `;
+                }
+            } catch (error) {
+                ordersList.innerHTML = '<p class="text-red-500 text-center py-4">Error loading orders.</p>';
+            }
+        }
+        
+        function closeOrdersModal() {
+            document.getElementById('ordersModal').classList.add('hidden');
+        }
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('ordersModal');
+            if (event.target === modal) {
+                closeOrdersModal();
+            }
+        }
+    </script>
+</body>
+</html>

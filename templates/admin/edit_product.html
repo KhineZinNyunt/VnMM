@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Product - Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8 max-w-3xl">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-3xl font-bold">Edit Product</h1>
+            <a href="/admin/products" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+                <i class="fas fa-arrow-left"></i> Back to Products
+            </a>
+        </div>
+        
+        <!-- Edit Form -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <form method="POST" enctype="multipart/form-data">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Current Image -->
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium mb-1">Current Image</label>
+                        {% if product.image_url %}
+                        <img src="{{ product.image_url }}" alt="{{ product.name }}" class="w-32 h-32 object-cover rounded mb-3">
+                        {% else %}
+                        <div class="w-32 h-32 bg-gray-200 rounded flex items-center justify-center mb-3">
+                            <i class="fas fa-image text-gray-400 text-3xl"></i>
+                        </div>
+                        {% endif %}
+                        <label class="block text-sm font-medium mb-1">Change Image (optional)</label>
+                        <input type="file" name="image" accept="image/*" class="w-full p-2 border rounded">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Product Name *</label>
+                        <input type="text" name="name" value="{{ product.name }}" required class="w-full p-2 border rounded">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Category</label>
+                        <select name="category_id" class="w-full p-2 border rounded">
+                            <option value="">Select Category</option>
+                            {% for cat in categories %}
+                            <option value="{{ cat.id }}" {% if product.category_id == cat.id %}selected{% endif %}>
+                                {{ cat.name }} {{ cat.icon }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium mb-1">Description</label>
+                        <textarea name="description" rows="4" class="w-full p-2 border rounded">{{ product.description or '' }}</textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Price (MMK)</label>
+                        <input type="number" name="price_mmk" step="0.01" value="{{ product.price_mmk or '' }}" class="w-full p-2 border rounded">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Price (VND)</label>
+                        <input type="number" name="price_vnd" step="0.01" value="{{ product.price_vnd or '' }}" class="w-full p-2 border rounded">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Weight (kg)</label>
+                        <input type="number" name="weight_kg" step="0.1" value="{{ product.weight_kg or 0.5 }}" class="w-full p-2 border rounded">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Stock</label>
+                        <input type="number" name="stock" value="{{ product.stock or 0 }}" class="w-full p-2 border rounded">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Origin</label>
+                        <select name="origin" class="w-full p-2 border rounded">
+                            <option value="vietnam" {% if product.origin == 'vietnam' %}selected{% endif %}>Vietnam</option>
+                            <option value="myanmar" {% if product.origin == 'myanmar' %}selected{% endif %}>Myanmar</option>
+                        </select>
+                    </div>
+                    <div class="flex items-center">
+                        <input type="checkbox" name="is_active" {% if product.is_active %}checked{% endif %} class="mr-2">
+                        <label class="text-sm font-medium">Active (visible to customers)</label>
+                    </div>
+                    <div class="md:col-span-2">
+                        <button type="submit" class="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600">
+                            <i class="fas fa-save"></i> Save Changes
+                        </button>
+                        <a href="/admin/products/delete/{{ product.id }}" 
+                           onclick="return confirm('Delete this product?')"
+                           class="ml-3 bg-red-500 text-white px-6 py-2 rounded hover:bg-red-600">
+                            <i class="fas fa-trash"></i> Delete Product
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

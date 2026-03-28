@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Categories - Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-8">
+            <div>
+                <h1 class="text-3xl font-bold">Manage Categories</h1>
+                <p class="text-gray-600">Organize your products by category</p>
+            </div>
+            <div class="flex gap-3">
+                <a href="/admin" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+                    <i class="fas fa-chart-line"></i> Dashboard
+                </a>
+                <a href="/admin/logout" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </div>
+        
+        <!-- Navigation Tabs -->
+        <div class="flex gap-2 mb-8 border-b">
+            <a href="/admin" class="px-4 py-2 text-gray-600 hover:text-blue-600">Dashboard</a>
+            <a href="/admin/products" class="px-4 py-2 text-gray-600 hover:text-blue-600">Products</a>
+            <a href="/admin/orders" class="px-4 py-2 text-gray-600 hover:text-blue-600">Orders</a>
+            <a href="/admin/categories" class="px-4 py-2 text-blue-600 border-b-2 border-blue-600 font-semibold">Categories</a>
+            <a href="/admin/customers" class="px-4 py-2 text-gray-600 hover:text-blue-600">Customers</a>
+        </div>
+        
+        <!-- Add Category Form -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <h2 class="text-xl font-bold mb-4">
+                <i class="fas fa-plus-circle text-green-500"></i> Add New Category
+            </h2>
+            <form method="POST" action="/admin/categories/add" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                    <label class="block text-sm font-medium mb-1">Category Name *</label>
+                    <input type="text" name="name" required class="w-full p-2 border rounded" placeholder="e.g., Women's Clothing">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Icon (emoji)</label>
+                    <input type="text" name="icon" class="w-full p-2 border rounded" placeholder="e.g., 👗">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Display Order</label>
+                    <input type="number" name="display_order" value="0" class="w-full p-2 border rounded" placeholder="0">
+                </div>
+                <div class="flex items-end">
+                    <button type="submit" class="bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600 w-full">
+                        <i class="fas fa-save"></i> Add Category
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Categories List -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-xl font-bold mb-4">
+                <i class="fas fa-tags"></i> All Categories
+            </h2>
+            
+            {% if categories %}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {% for cat in categories %}
+                <div class="border rounded-lg p-4 hover:shadow-md transition">
+                    <div class="flex justify-between items-start">
+                        <div class="flex items-center gap-3">
+                            <span class="text-3xl">{{ cat.icon or '📦' }}</span>
+                            <div>
+                                <h3 class="font-semibold text-lg">{{ cat.name }}</h3>
+                                <p class="text-xs text-gray-500">Slug: {{ cat.slug }}</p>
+                                <p class="text-xs text-gray-400">Order: {{ cat.display_order }}</p>
+                            </div>
+                        </div>
+                        <a href="/admin/categories/delete/{{ cat.id }}" 
+                           onclick="return confirm('Delete category {{ cat.name }}? This will not delete products but they will lose category association.')"
+                           class="text-red-500 hover:text-red-700">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="text-gray-500 text-center py-8">No categories yet. Add your first category above!</p>
+            {% endif %}
+        </div>
+        
+        <!-- Category Tips -->
+        <div class="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <h3 class="font-semibold text-blue-800 mb-2">Category Tips:</h3>
+            <ul class="text-sm text-gray-600 space-y-1">
+                <li><i class="fas fa-check-circle text-green-500"></i> Categories help customers find products faster</li>
+                <li><i class="fas fa-check-circle text-green-500"></i> Use clear, descriptive category names</li>
+                <li><i class="fas fa-check-circle text-green-500"></i> Display order determines how categories are sorted</li>
+                <li><i class="fas fa-check-circle text-green-500"></i> Common categories: Women's Clothing, Men's Clothing, Accessories, Snacks, Traditional Food, Ingredients</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

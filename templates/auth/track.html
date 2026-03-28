@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Order - Vietnam-Myanmar Shop</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8 max-w-3xl">
+        <a href="/" class="text-blue-500 mb-4 inline-block">← Back to Shop</a>
+        
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h1 class="text-2xl font-bold mb-4">Track Order</h1>
+            <p class="text-gray-600 mb-6">Order #{{ order.order_number }}</p>
+            
+            <!-- Tracking Timeline -->
+            <div class="relative mb-8">
+                <div class="flex items-center justify-between">
+                    <div class="text-center flex-1">
+                        <div class="w-10 h-10 rounded-full {% if order.status in ['pending', 'confirmed', 'shipped', 'delivered'] %}bg-green-500{% else %}bg-gray-300{% endif %} flex items-center justify-center mx-auto mb-2">
+                            <i class="fas fa-check text-white text-sm"></i>
+                        </div>
+                        <p class="text-sm font-semibold">Order Placed</p>
+                        <p class="text-xs text-gray-500">{{ order.created_at[:10] }}</p>
+                    </div>
+                    <div class="flex-1 h-1 {% if order.status in ['confirmed', 'shipped', 'delivered'] %}bg-green-500{% else %}bg-gray-300{% endif %}"></div>
+                    <div class="text-center flex-1">
+                        <div class="w-10 h-10 rounded-full {% if order.status in ['confirmed', 'shipped', 'delivered'] %}bg-green-500{% else %}bg-gray-300{% endif %} flex items-center justify-center mx-auto mb-2">
+                            <i class="fas fa-check text-white text-sm"></i>
+                        </div>
+                        <p class="text-sm font-semibold">Confirmed</p>
+                    </div>
+                    <div class="flex-1 h-1 {% if order.status in ['shipped', 'delivered'] %}bg-green-500{% else %}bg-gray-300{% endif %}"></div>
+                    <div class="text-center flex-1">
+                        <div class="w-10 h-10 rounded-full {% if order.status in ['shipped', 'delivered'] %}bg-green-500{% else %}bg-gray-300{% endif %} flex items-center justify-center mx-auto mb-2">
+                            <i class="fas fa-truck text-white text-sm"></i>
+                        </div>
+                        <p class="text-sm font-semibold">Shipped</p>
+                    </div>
+                    <div class="flex-1 h-1 {% if order.status == 'delivered' %}bg-green-500{% else %}bg-gray-300{% endif %}"></div>
+                    <div class="text-center flex-1">
+                        <div class="w-10 h-10 rounded-full {% if order.status == 'delivered' %}bg-green-500{% else %}bg-gray-300{% endif %} flex items-center justify-center mx-auto mb-2">
+                            <i class="fas fa-home text-white text-sm"></i>
+                        </div>
+                        <p class="text-sm font-semibold">Delivered</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Order Details -->
+            <div class="border-t pt-4">
+                <h3 class="font-semibold mb-3">Order Details</h3>
+                <div class="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                        <p class="text-gray-500">Product</p>
+                        <p>{{ order.products.name if order.products else '-' }}</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-500">Quantity</p>
+                        <p>{{ order.quantity }}</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-500">Total Amount</p>
+                        <p class="font-bold">{{ order.total_amount }} MMK</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-500">Payment Method</p>
+                        <p>{{ order.payment_method or '-' }}</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-500">Tracking Number</p>
+                        <p>{{ order.tracking_number or 'Not yet available' }}</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-500">Shipping Address</p>
+                        <p>{{ order.customer_name }}, {{ order.customer_city }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

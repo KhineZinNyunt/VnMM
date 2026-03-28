@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Account - Vietnam-Myanmar Shop</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-8">
+            <div>
+                <h1 class="text-3xl font-bold">My Account</h1>
+                <p class="text-gray-600">Welcome back, {{ customer.full_name }}!</p>
+            </div>
+            <div class="flex gap-3">
+                <a href="/" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+                    <i class="fas fa-home"></i> Shop
+                </a>
+                <a href="/logout" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Profile Sidebar -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="text-center mb-6">
+                    <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-user text-4xl text-blue-500"></i>
+                    </div>
+                    <h2 class="text-xl font-bold">{{ customer.full_name }}</h2>
+                    <p class="text-gray-500">{{ customer.email }}</p>
+                </div>
+                
+                <hr class="my-4">
+                
+                <form method="POST" action="/account/update">
+                    <h3 class="font-semibold mb-3">Update Profile</h3>
+                    <div class="mb-3">
+                        <label class="block text-sm text-gray-600 mb-1">Full Name</label>
+                        <input type="text" name="full_name" value="{{ customer.full_name }}" 
+                               class="w-full p-2 border rounded text-sm">
+                    </div>
+                    <div class="mb-3">
+                        <label class="block text-sm text-gray-600 mb-1">Phone</label>
+                        <input type="text" name="phone" value="{{ customer.phone or '' }}" 
+                               class="w-full p-2 border rounded text-sm">
+                    </div>
+                    <div class="mb-3">
+                        <label class="block text-sm text-gray-600 mb-1">Address</label>
+                        <input type="text" name="address" value="{{ customer.address or '' }}" 
+                               class="w-full p-2 border rounded text-sm">
+                    </div>
+                    <div class="mb-3">
+                        <label class="block text-sm text-gray-600 mb-1">City</label>
+                        <input type="text" name="city" value="{{ customer.city or '' }}" 
+                               class="w-full p-2 border rounded text-sm">
+                    </div>
+                    <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded text-sm hover:bg-blue-600">
+                        Update Profile
+                    </button>
+                </form>
+            </div>
+            
+            <!-- Orders Section -->
+            <div class="md:col-span-2 bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-xl font-bold mb-4">My Orders</h2>
+                
+                {% if orders %}
+                    {% for order in orders %}
+                    <div class="border rounded-lg p-4 mb-4">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <span class="font-semibold">Order #{{ order.order_number }}</span>
+                                <span class="text-sm text-gray-500 ml-3">{{ order.created_at[:10] }}</span>
+                            </div>
+                            <span class="px-3 py-1 rounded text-sm 
+                                {% if order.status == 'pending' %}bg-yellow-200 text-yellow-800
+                                {% elif order.status == 'confirmed' %}bg-blue-200 text-blue-800
+                                {% elif order.status == 'shipped' %}bg-purple-200 text-purple-800
+                                {% else %}bg-green-200 text-green-800{% endif %}">
+                                {{ order.status }}
+                            </span>
+                        </div>
+                        <p class="text-gray-600">{{ order.products.name if order.products else 'Product' }} x {{ order.quantity }}</p>
+                        <div class="flex justify-between items-center mt-3">
+                            <span class="font-bold">{{ order.total_amount }} MMK</span>
+                            <a href="/track-order/{{ order.order_number }}" 
+                               class="text-blue-500 hover:underline text-sm">
+                                Track Order <i class="fas fa-truck"></i>
+                            </a>
+                        </div>
+                        {% if order.tracking_number %}
+                        <p class="text-xs text-gray-400 mt-2">Tracking: {{ order.tracking_number }}</p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-gray-500 text-center py-8">No orders yet. <a href="/" class="text-blue-500">Start shopping!</a></p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>
