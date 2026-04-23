@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="icon" type="image/png" href="/static/images/icon.png">
+    
     <style>
         * {
             font-family: 'Inter', sans-serif;
@@ -127,60 +128,68 @@
 </head>
 <body class="bg-gray-50">
     
-<!-- Header -->
-<header class="bg-white shadow-md sticky top-0 z-50">
-    <div class="container mx-auto px-4 py-4">
-        <div class="flex justify-between items-center flex-wrap gap-4">
-            <!-- Logo Area -->
-            <div class="flex items-center space-x-3">
-                <!-- Logo Image -->
-                <div class="w-12 h-12 rounded-xl overflow-hidden bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center">
-                    {% if logo_exists %}
-                    <img src="/static/images/icon.png" alt="Vietnam-Myanmar Shop" class="w-full h-full object-cover">
+    <!-- Header -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex justify-between items-center">
+                <!-- Logo -->
+                <a href="/" class="flex items-center gap-2">
+                    <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-store text-white text-sm"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-bold text-gray-800">Vietnam Myanmar Shop</h1>
+                        <p class="text-xs text-gray-400">Cross-Border Marketplace</p>
+                    </div>
+                </a>
+                
+                <!-- Navigation Links -->
+                <div class="flex items-center gap-4 text-sm">
+                    <!-- Cart Icon with Count -->
+                    <a href="/cart" class="relative text-gray-600 hover:text-gray-800">
+                        <i class="fas fa-shopping-cart text-lg"></i>
+                        <span id="cartCount" class="absolute -top-2 -right-3 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5">0</span>
+                    </a>
+                    
+                    {% if session.customer_name %}
+                        <div class="flex items-center gap-2">
+                            {% if session.profile_image %}
+                            <img src="{{ session.profile_image }}" alt="Profile" class="w-8 h-8 rounded-full object-cover">
+                            {% else %}
+                            <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-user text-blue-600 text-sm"></i>
+                            </div>
+                            {% endif %}
+                            <span class="text-gray-700 font-medium hidden sm:inline">Hi, {{ session.customer_name.split()[0] }}</span>
+                        </div>
+                        <a href="/account" class="text-gray-600 hover:text-gray-800">
+                            <i class="fas fa-user-circle"></i> <span class="hidden sm:inline">Account</span>
+                        </a>
+                        <a href="/my-orders" class="text-gray-600 hover:text-blue-600">
+                            <i class="fas fa-shopping-bag"></i> <span class="hidden sm:inline">Orders</span>
+                        </a>
+                        <a href="/logout" class="text-gray-600 hover:text-red-600">
+                            <i class="fas fa-sign-out-alt"></i> <span class="hidden sm:inline">Logout</span>
+                        </a>
                     {% else %}
-                    <i class="fas fa-globe-asia text-white text-xl"></i>
+                        <a href="/login" class="text-gray-600 hover:text-gray-800">
+                            <i class="fas fa-sign-in-alt"></i> <span class="hidden sm:inline">Login</span>
+                        </a>
+                        <a href="/register" class="bg-blue-600 text-white px-3 py-1.5 rounded-md hover:bg-blue-700">
+                            <i class="fas fa-user-plus"></i> <span class="hidden sm:inline">Register</span>
+                        </a>
+                    {% endif %}
+                    
+                    <!-- Admin button - ONLY visible when admin is logged in -->
+                    {% if session.admin_logged_in == True %}
+                    <a href="/admin" class="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-900 transition text-sm">
+                        <i class="fas fa-user-shield"></i> Admin
+                    </a>
                     {% endif %}
                 </div>
-                <div>
-                    <h1 class="text-2xl font-bold gradient-text">Vietnam × Myanmar</h1>
-                    <p class="text-xs text-gray-500">Cross-Border Marketplace</p>
-                </div>
-            </div>
-            
-            <!-- Navigation Links (same as before) -->
-            <div class="flex items-center gap-6">
-                {% if session.customer_name %}
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                            <i class="fas fa-user text-blue-600 text-sm"></i>
-                        </div>
-                        <span class="text-gray-700 font-medium">Hi, {{ session.customer_name.split()[0] }}</span>
-                    </div>
-                    <a href="/account" class="text-gray-600 hover:text-blue-600 transition">
-                        <i class="fas fa-user-circle"></i> Account
-                    </a>
-                    <a href="/logout" class="text-gray-600 hover:text-red-600 transition">
-                        <i class="fas fa-sign-out-alt"></i> Logout
-                    </a>
-                {% else %}
-                    <a href="/login" class="text-gray-600 hover:text-blue-600 transition">
-                        <i class="fas fa-sign-in-alt"></i> Login
-                    </a>
-                    <a href="/register" class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-5 py-2 rounded-lg hover:shadow-lg transition">
-                        <i class="fas fa-user-plus"></i> Register
-                    </a>
-                {% endif %}
-                
-                <!-- Admin button - ONLY visible when admin is logged in -->
-                {% if session.admin_logged_in == True %}
-                <a href="/admin" class="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-900 transition text-sm">
-                    <i class="fas fa-user-shield"></i> Admin
-                </a>
-                {% endif %}
             </div>
         </div>
-    </div>
-</header>
+    </header>
 
     <!-- Hero Section -->
     <section class="hero-gradient text-white">
@@ -230,6 +239,31 @@
             {% endif %}
         {% endwith %}
 
+        <!-- Market Selection Buttons -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+            <a href="/vietnam" class="group">
+                <div class="bg-gradient-to-r from-red-600 to-red-700 rounded-2xl p-8 text-center text-white hover:shadow-xl transition transform hover:scale-105">
+                    <div class="text-6xl mb-4">🇻🇳</div>
+                    <h2 class="text-3xl font-bold mb-2">Vietnam → Myanmar</h2>
+                    <p class="text-lg mb-4">Shop Vietnamese Fashion & Accessories</p>
+                    <div class="inline-block bg-white text-red-600 px-6 py-2 rounded-full font-semibold">
+                        Browse Collection →
+                    </div>
+                </div>
+            </a>
+            
+            <a href="/myanmar" class="group">
+                <div class="bg-gradient-to-r from-green-600 to-teal-700 rounded-2xl p-8 text-center text-white hover:shadow-xl transition transform hover:scale-105">
+                    <div class="text-6xl mb-4">🇲🇲</div>
+                    <h2 class="text-3xl font-bold mb-2">Myanmar → Vietnam</h2>
+                    <p class="text-lg mb-4">Shop Myanmar Food & Ingredients</p>
+                    <div class="inline-block bg-white text-green-600 px-6 py-2 rounded-full font-semibold">
+                        Browse Collection →
+                    </div>
+                </div>
+            </a>
+        </div>
+
         <!-- Categories Section -->
         <div class="mb-16 scroll-reveal">
             <div class="text-center mb-10">
@@ -247,104 +281,6 @@
                 {% endfor %}
             </div>
         </div>
-
-        <!-- Vietnam to Myanmar Section -->
-        {% if vietnam_products %}
-        <div class="mb-16 scroll-reveal">
-            <div class="flex items-center justify-between mb-8">
-                <div>
-                    <div class="flex items-center gap-3 mb-2">
-                        <span class="text-4xl">🇻🇳</span>
-                        <h2 class="text-3xl font-bold text-gray-800">From Vietnam to Myanmar</h2>
-                    </div>
-                    <p class="text-gray-500">Trendy fashion and accessories for Myanmar customers</p>
-                </div>
-                <span class="bg-red-100 text-red-600 px-4 py-2 rounded-full text-sm font-semibold">
-                    <i class="fas fa-tag"></i> Clothing & Accessories
-                </span>
-            </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {% for product in vietnam_products %}
-                <div class="product-card bg-white rounded-xl shadow-md overflow-hidden">
-                    <div class="relative h-64 bg-gray-100">
-                        {% if product.image_url %}
-                        <img src="{{ product.image_url }}" alt="{{ product.name }}" class="w-full h-full object-cover">
-                        {% else %}
-                        <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50">
-                            <i class="fas fa-tshirt text-6xl text-gray-300"></i>
-                        </div>
-                        {% endif %}
-                        <div class="absolute top-3 right-3 bg-white rounded-full px-3 py-1 text-xs font-semibold shadow-md">
-                            🇲🇲 Myanmar Market
-                        </div>
-                    </div>
-                    <div class="p-5">
-                        <h3 class="font-bold text-lg text-gray-800 mb-2 line-clamp-1">{{ product.name }}</h3>
-                        <p class="text-gray-500 text-sm mb-3 line-clamp-2">{{ product.description[:80] if product.description else 'No description' }}...</p>
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <span class="text-2xl font-bold text-blue-600">{{ "%.0f"|format(product.price_mmk) }} MMK</span>
-                            </div>
-                            <a href="/product/{{ product.slug }}" 
-                               class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-lg hover:shadow-lg transition text-sm font-medium">
-                                View Details
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-        {% endif %}
-
-        <!-- Myanmar to Vietnam Section -->
-        {% if myanmar_products %}
-        <div class="mb-16 scroll-reveal">
-            <div class="flex items-center justify-between mb-8">
-                <div>
-                    <div class="flex items-center gap-3 mb-2">
-                        <span class="text-4xl">🇲🇲</span>
-                        <h2 class="text-3xl font-bold text-gray-800">From Myanmar to Vietnam</h2>
-                    </div>
-                    <p class="text-gray-500">Authentic Myanmar food and ingredients for Vietnam</p>
-                </div>
-                <span class="bg-green-100 text-green-600 px-4 py-2 rounded-full text-sm font-semibold">
-                    <i class="fas fa-utensils"></i> Food & Ingredients
-                </span>
-            </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {% for product in myanmar_products %}
-                <div class="product-card bg-white rounded-xl shadow-md overflow-hidden">
-                    <div class="relative h-64 bg-gray-100">
-                        {% if product.image_url %}
-                        <img src="{{ product.image_url }}" alt="{{ product.name }}" class="w-full h-full object-cover">
-                        {% else %}
-                        <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-green-50 to-teal-50">
-                            <i class="fas fa-utensils text-6xl text-gray-300"></i>
-                        </div>
-                        {% endif %}
-                        <div class="absolute top-3 right-3 bg-white rounded-full px-3 py-1 text-xs font-semibold shadow-md">
-                            🇻🇳 Vietnam Market
-                        </div>
-                    </div>
-                    <div class="p-5">
-                        <h3 class="font-bold text-lg text-gray-800 mb-2 line-clamp-1">{{ product.name }}</h3>
-                        <p class="text-gray-500 text-sm mb-3 line-clamp-2">{{ product.description[:80] if product.description else 'No description' }}...</p>
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <span class="text-2xl font-bold text-green-600">{{ "%.0f"|format(product.price_vnd) }} VND</span>
-                            </div>
-                            <a href="/product/{{ product.slug }}" 
-                               class="bg-gradient-to-r from-green-600 to-teal-600 text-white px-4 py-2 rounded-lg hover:shadow-lg transition text-sm font-medium">
-                                View Details
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-        {% endif %}
 
         <!-- Shipping Info Banner -->
         <div class="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-8 text-center border border-blue-100 scroll-reveal">
@@ -397,62 +333,53 @@
         </div>
     </div>
 
-<!-- Footer -->
-<footer class="bg-gray-900 text-white mt-16">
-    <div class="container mx-auto px-4 py-12">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <!-- Logo and About Section -->
-            <div>
-                <div class="flex items-center gap-3 mb-4">
-                    <!-- Logo in footer -->
-                    <div class="w-10 h-10 rounded-xl overflow-hidden bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center">
-                        {% if logo_exists %}
-                        <img src="/static/images/icon.png" alt="Vietnam-Myanmar Shop" class="w-full h-full object-cover">
-                        {% else %}
-                        <i class="fas fa-globe-asia text-white text-lg"></i>
-                        {% endif %}
-                    </div>
-                    <div>
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white mt-16">
+        <div class="container mx-auto px-4 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-globe-asia text-white text-sm"></i>
+                        </div>
                         <span class="font-bold text-lg">Vietnam × Myanmar</span>
-                        <p class="text-xs text-gray-400">Cross-Border Marketplace</p>
                     </div>
+                    <p class="text-gray-400 text-sm">Connecting two nations through quality products and reliable air cargo services.</p>
                 </div>
-                <p class="text-gray-400 text-sm leading-relaxed">Connecting two nations through quality products and reliable air cargo services.</p>
+                <div>
+                    <h4 class="font-bold mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="/" class="hover:text-white transition">Home</a></li>
+                        <li><a href="/account" class="hover:text-white transition">My Account</a></li>
+                        <li><a href="/my-orders" class="hover:text-white transition">My Orders</a></li>
+                        <li><a href="/cart" class="hover:text-white transition">Cart</a></li>
+                        <li><a href="/cargo" class="hover:text-white transition">Air Cargo</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Payment Methods</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><i class="fas fa-mobile-alt mr-2"></i> KBZ Pay</li>
+                        <li><i class="fas fa-wifi mr-2"></i> Wave Money</li>
+                        <li><i class="fas fa-qrcode mr-2"></i> VietQR</li>
+                        <li><i class="fas fa-university mr-2"></i> Bank Transfer</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Contact</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><i class="fas fa-envelope mr-2"></i> support@vietmyan.com</li>
+                        <li><i class="fas fa-phone mr-2"></i> +95 9 xxx xxx xxx</li>
+                        <li><i class="fab fa-facebook mr-2"></i> /vietmyanshop</li>
+                    </ul>
+                </div>
             </div>
-            
-            <div>
-                <h4 class="font-bold mb-4">Quick Links</h4>
-                <ul class="space-y-2 text-sm text-gray-400">
-                    <li><a href="/" class="hover:text-white transition">Home</a></li>
-                    <li><a href="/account" class="hover:text-white transition">My Account</a></li>
-                    <li><a href="/track" class="hover:text-white transition">Track Order</a></li>
-                </ul>
-            </div>
-            
-            <div>
-                <h4 class="font-bold mb-4">Payment Methods</h4>
-                <ul class="space-y-2 text-sm text-gray-400">
-                    <li><i class="fas fa-mobile-alt mr-2"></i> KBZ Pay</li>
-                    <li><i class="fas fa-wifi mr-2"></i> Wave Money</li>
-                    <li><i class="fas fa-qrcode mr-2"></i> VietQR</li>
-                    <li><i class="fas fa-university mr-2"></i> Bank Transfer</li>
-                </ul>
-            </div>
-            
-            <div>
-                <h4 class="font-bold mb-4">Contact</h4>
-                <ul class="space-y-2 text-sm text-gray-400">
-                    <li><i class="fas fa-envelope mr-2"></i> support@vnmmshop.com</li>
-                    <li><i class="fas fa-phone mr-2"></i> +95 xxx xxx xxx</li>
-                    <li><i class="fab fa-facebook mr-2"></i> /vnmmshop</li>
-                </ul>
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-gray-500">
+                <p>&copy; 2025 Vietnam-Myanmar Shop. All rights reserved. | Bridging cultures through commerce</p>
             </div>
         </div>
-        <div class="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-gray-500">
-            <p>&copy; 2024 Vietnam-Myanmar Shop. All rights reserved. | Bridging cultures through commerce</p>
-        </div>
-    </div>
-</footer>
+    </footer>
+
     <!-- Scroll Reveal Script -->
     <script>
         const revealElements = document.querySelectorAll('.scroll-reveal');
@@ -469,6 +396,21 @@
         
         window.addEventListener('scroll', revealOnScroll);
         window.addEventListener('load', revealOnScroll);
+        
+        // Update cart count
+        async function updateCartCount() {
+            try {
+                const response = await fetch('/cart-count');
+                const data = await response.json();
+                const cartCountSpan = document.getElementById('cartCount');
+                if (cartCountSpan) {
+                    cartCountSpan.textContent = data.count;
+                }
+            } catch (error) {
+                console.error('Error fetching cart count:', error);
+            }
+        }
+        updateCartCount();
     </script>
 </body>
 </html>

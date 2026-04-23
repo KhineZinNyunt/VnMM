@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Cargo - Vietnam-Myanmar Shop</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8 max-w-3xl">
+        <a href="/" class="text-blue-500 hover:underline mb-4 inline-block">← Back to Home</a>
+        
+        <div class="bg-white rounded-xl shadow-md p-6">
+            <div class="flex justify-between items-start mb-6">
+                <div>
+                    <h1 class="text-2xl font-bold">Shipment Status</h1>
+                    <p class="text-gray-500">Tracking: <span class="font-mono">{{ shipment.tracking_number }}</span></p>
+                </div>
+                <div class="px-4 py-2 rounded-full text-sm font-semibold 
+                    {% if shipment.status == 'delivered' %}bg-green-100 text-green-700
+                    {% elif shipment.status == 'in_transit' %}bg-blue-100 text-blue-700
+                    {% elif shipment.status == 'pending' %}bg-yellow-100 text-yellow-700
+                    {% else %}bg-gray-100 text-gray-700{% endif %}">
+                    {{ shipment.status|replace('_', ' ')|title }}
+                </div>
+            </div>
+            
+            <!-- Tracking Timeline -->
+            <div class="relative mb-8">
+                <div class="flex items-center justify-between">
+                    <div class="text-center flex-1">
+                        <div class="w-10 h-10 rounded-full {% if shipment.status in ['pending', 'processing', 'in_transit', 'out_for_delivery', 'delivered'] %}bg-green-500{% else %}bg-gray-300{% endif %} flex items-center justify-center mx-auto mb-2">
+                            <i class="fas fa-check text-white text-sm"></i>
+                        </div>
+                        <p class="text-sm font-semibold">Order Placed</p>
+                        <p class="text-xs text-gray-500">{{ shipment.created_at[:10] }}</p>
+                    </div>
+                    <div class="flex-1 h-1 {% if shipment.status in ['processing', 'in_transit', 'out_for_delivery', 'delivered'] %}bg-green-500{% else %}bg-gray-300{% endif %}"></div>
+                    <div class="text-center flex-1">
+                        <div class="w-10 h-10 rounded-full {% if shipment.status in ['processing', 'in_transit', 'out_for_delivery', 'delivered'] %}bg-green-500{% else %}bg-gray-300{% endif %} flex items-center justify-center mx-auto mb-2">
+                            <i class="fas fa-box text-white text-sm"></i>
+                        </div>
+                        <p class="text-sm font-semibold">Processing</p>
+                    </div>
+                    <div class="flex-1 h-1 {% if shipment.status in ['in_transit', 'out_for_delivery', 'delivered'] %}bg-green-500{% else %}bg-gray-300{% endif %}"></div>
+                    <div class="text-center flex-1">
+                        <div class="w-10 h-10 rounded-full {% if shipment.status in ['in_transit', 'out_for_delivery', 'delivered'] %}bg-green-500{% else %}bg-gray-300{% endif %} flex items-center justify-center mx-auto mb-2">
+                            <i class="fas fa-plane text-white text-sm"></i>
+                        </div>
+                        <p class="text-sm font-semibold">In Transit</p>
+                    </div>
+                    <div class="flex-1 h-1 {% if shipment.status in ['out_for_delivery', 'delivered'] %}bg-green-500{% else %}bg-gray-300{% endif %}"></div>
+                    <div class="text-center flex-1">
+                        <div class="w-10 h-10 rounded-full {% if shipment.status == 'delivered' %}bg-green-500{% else %}bg-gray-300{% endif %} flex items-center justify-center mx-auto mb-2">
+                            <i class="fas fa-home text-white text-sm"></i>
+                        </div>
+                        <p class="text-sm font-semibold">Delivered</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Shipment Details -->
+            <div class="border-t pt-4">
+                <h3 class="font-semibold mb-3">Shipment Details</h3>
+                <div class="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                        <p class="text-gray-500">From</p>
+                        <p class="font-medium">{{ shipment.from_city }}</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-500">To</p>
+                        <p class="font-medium">{{ shipment.to_city }}</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-500">Weight</p>
+                        <p class="font-medium">{{ shipment.weight }} kg</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-500">Package Type</p>
+                        <p class="font-medium">{{ shipment.package_type|title }}</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-500">Current Location</p>
+                        <p class="font-medium">{{ shipment.current_location or 'Not available' }}</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-500">Estimated Delivery</p>
+                        <p class="font-medium">{{ shipment.estimated_delivery or 'To be confirmed' }}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Updates Timeline -->
+            <div class="border-t mt-4 pt-4">
+                <h3 class="font-semibold mb-3">Tracking History</h3>
+                <div class="space-y-3">
+                    <div class="flex gap-3">
+                        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-box text-blue-600 text-sm"></i>
+                        </div>
+                        <div>
+                            <p class="font-medium">Shipment created</p>
+                            <p class="text-xs text-gray-500">{{ shipment.created_at }}</p>
+                        </div>
+                    </div>
+                    {% if shipment.status != 'pending' %}
+                    <div class="flex gap-3">
+                        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-check text-blue-600 text-sm"></i>
+                        </div>
+                        <div>
+                            <p class="font-medium">Order confirmed</p>
+                            <p class="text-xs text-gray-500">{{ shipment.updated_at }}</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

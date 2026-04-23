@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cargo Request Details - Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <div class="flex justify-between items-center mb-6">
+            <div>
+                <a href="/admin/cargo-requests" class="text-blue-500 hover:underline">← Back to Requests</a>
+                <h1 class="text-2xl font-bold mt-2">Cargo Request Details</h1>
+            </div>
+            <a href="/admin/logout" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex justify-between items-start mb-6">
+                <div>
+                    <p class="text-sm text-gray-500">Request Number</p>
+                    <p class="text-xl font-mono font-bold">{{ request.request_number }}</p>
+                </div>
+                <div class="px-3 py-1 rounded-full text-sm 
+                    {% if request.status == 'pending' %}bg-yellow-100 text-yellow-800
+                    {% elif request.status == 'converted' %}bg-green-100 text-green-800
+                    {% else %}bg-gray-100 text-gray-800{% endif %}">
+                    {{ request.status|title }}
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-6">
+                <!-- Customer Info -->
+                <div>
+                    <h3 class="font-semibold text-gray-800 border-b pb-2 mb-3">Customer Information</h3>
+                    <div class="space-y-2">
+                        <p><span class="text-gray-500">Name:</span> {{ request.customer_name }}</p>
+                        <p><span class="text-gray-500">Email:</span> {{ request.customer_email }}</p>
+                        <p><span class="text-gray-500">Phone:</span> {{ request.customer_phone }}</p>
+                    </div>
+                </div>
+                
+                <!-- Shipment Details -->
+                <div>
+                    <h3 class="font-semibold text-gray-800 border-b pb-2 mb-3">Shipment Details</h3>
+                    <div class="space-y-2">
+                        <p><span class="text-gray-500">Direction:</span> 
+                            {% if request.direction == 'vietnam-to-myanmar' %}
+                            🇻🇳 Vietnam → 🇲🇲 Myanmar
+                            {% else %}
+                            🇲🇲 Myanmar → 🇻🇳 Vietnam
+                            {% endif %}
+                        </p>
+                        <p><span class="text-gray-500">Route:</span> {{ request.from_city }} → {{ request.to_city }}</p>
+                        <p><span class="text-gray-500">Weight:</span> {{ request.weight }} kg</p>
+                        <p><span class="text-gray-500">Package Type:</span> {{ request.package_type|title }}</p>
+                        <p><span class="text-gray-500">Estimated Price:</span> {{ "%.0f"|format(request.estimated_price) }} MMK</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Message -->
+            {% if request.message %}
+            <div class="mt-4">
+                <h3 class="font-semibold text-gray-800 border-b pb-2 mb-3">Additional Information</h3>
+                <p class="text-gray-600 bg-gray-50 p-3 rounded">{{ request.message }}</p>
+            </div>
+            {% endif %}
+            
+            <!-- Convert to Shipment Form -->
+            <div class="mt-6 pt-4 border-t">
+                <h3 class="font-semibold text-gray-800 mb-3">Convert to Shipment</h3>
+                <form method="POST" action="/admin/cargo-requests/convert/{{ request.id }}" class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Final Price (MMK)</label>
+                        <input type="number" name="actual_price" value="{{ request.estimated_price }}" 
+                               class="w-full p-2 border rounded">
+                    </div>
+                    <div class="flex items-end">
+                        <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700">
+                            <i class="fas fa-check-circle"></i> Convert to Shipment
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

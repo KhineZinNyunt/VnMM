@@ -297,6 +297,119 @@ def customers():
         })
     
     return render_template('admin/customers.html', customers=customers_with_stats)
+@admin.route('/admin/cargo-requests')
+def cargo_requests():
+    """Manage cargo requests"""
+    if not admin_required():
+        return redirect(url_for('admin.login'))
+    
+    # Get all cargo requests
+    requests = supabase.table('cargo_requests').select('*').order('created_at', desc=True).execute()
+    
+    return render_template('admin/cargo_requests.html', requests=requests.data or [])
+
+@admin.route('/admin/cargo-requests/view/<int:request_id>')
+def view_cargo_request(request_id):
+    """View single cargo request"""
+    if not admin_required():
+        return redirect(url_for('admin.login'))
+    
+    request_data = supabase.table('cargo_requests').select('*').eq('id', request_id).execute()
+    
+    if not request_data.data:
+        flash('Request not found', 'error')
+        return redirect(url_for('admin.cargo_requests'))
+    
+    return render_template('admin/cargo_request_detail.html', request=request_data.data[0])
+
+@admin.route('/admin/cargo-requests/convert/<int:request_id>', methods=['POST'])
+def convert_to_shipment(request_id):
+    """Convert cargo request to actual shipment"""
+    if not admin_required():
+        return redirect(url_for('admin.login'))
+    
+    # Get the request
+    request_data = supabase.table('cargo_requests').select('*').eq('id', request_id).execute()
+    
+    if not request_data.data:
+        flash('Request not found', 'error')
+        return redirect(url_for('admin.cargo_requests'))
+    
+    req = request_data.data[0]
+    
+    # Generate tracking number
+    tracking_number = f"CARGO-{datetime.now().strftime('%Y%m%d')}-{request_id}"
+    
+    # Create shipment record
+    shipment_data = {
+        'tracking_number': tracking_number,
+        'customer_name': req['customer_name'],
+        'customer_email': req['customer_email'],
+        'customer_phone': req['customer_phone'],
+        'direction': req['direction'],
+        'from_city': req['from_city'],
+        'to_city': req['to_city'],
+        'weight': req['weight'],
+        'package_type': req['package_type'],
+        'actual_price': request.form.get('actual_price', req.get('estimated_price')),
+        'status': 'pending',
+        'created_at': datetime.now().isoformat(),
+        'updated_at': datetime.now().isoformat()
+    }
+    
+    supabase.table('cargo_shipments').insert(shipment_data).execute()
+    
+    # Update request status
+    supabase.table('cargo_requests').update({'status': 'converted'}).eq('id', request_id).execute()
+    
+    flash(f'Request converted to shipment! Tracking number: {tracking_number}', 'success')
+    return redirect(url_for('admin.cargo_requests'))
+
+@admin.route('/admin/cargo-shipments')
+def cargo_shipments():
+    """Manage cargo shipments"""
+    if not admin_required():
+        return redirect(url_for('admin.login'))
+    
+    shipments = supabase.table('cargo_shipments').select('*').order('created_at', desc=True).execute()
+    
+    return render_template('admin/cargo_shipments.html', shipments=shipments.data or [])
+
+@admin.route('/admin/cargo-shipments/update/<int:shipment_id>', methods=['POST'])
+def update_cargo_shipment(shipment_id):
+    """Update cargo shipment status"""
+    if not admin_required():
+        return redirect(url_for('admin.login'))
+    
+    data = {
+        'status': request.form.get('status'),
+        'current_location': request.form.get('current_location'),
+        'tracking_number': request.form.get('tracking_number'),
+        'actual_price': float(request.form.get('actual_price', 0)) if request.form.get('actual_price') else None,
+        'updated_at': datetime.now().isoformat()
+    }
+    
+    if request.form.get('estimated_delivery'):
+        data['estimated_delivery'] = request.form.get('estimated_delivery')
+    
+    supabase.table('cargo_shipments').update(data).eq('id', shipment_id).execute()
+    
+    flash('Shipment updated successfully!', 'success')
+    return redirect(url_for('admin.cargo_shipments'))
+
+@admin.route('/admin/cargo-shipments/view/<int:shipment_id>')
+def view_cargo_shipment(shipment_id):
+    """View single cargo shipment"""
+    if not admin_required():
+        return redirect(url_for('admin.login'))
+    
+    shipment = supabase.table('cargo_shipments').select('*').eq('id', shipment_id).execute()
+    
+    if not shipment.data:
+        flash('Shipment not found', 'error')
+        return redirect(url_for('admin.cargo_shipments'))
+    
+    return render_template('admin/cargo_shipment_detail.html', shipment=shipment.data[0])
 
 @admin.route('/admin/customers/<customer_id>/orders')
 def get_customer_orders(customer_id):

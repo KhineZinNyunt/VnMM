@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Cargo - Vietnam-Myanmar Shop</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-16 max-w-2xl">
+        <div class="bg-white rounded-xl shadow-md p-8 text-center">
+            <i class="fas fa-search text-5xl text-blue-500 mb-4"></i>
+            <h1 class="text-2xl font-bold text-gray-800 mb-2">Track Your Cargo</h1>
+            <p class="text-gray-500 mb-6">Enter your tracking number to check shipment status</p>
+            
+            <form method="GET" action="/track-cargo" class="flex gap-3">
+                <input type="text" name="tracking_number" 
+                       placeholder="e.g., CARGO-20250101-001" 
+                       class="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <button type="submit" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700">
+                    <i class="fas fa-search"></i> Track
+                </button>
+            </form>
+            
+            <p class="text-xs text-gray-400 mt-4">
+                Tracking number format: CARGO-YYYYMMDD-XXX
+            </p>
+        </div>
+    </div>
+</body>
+</html>

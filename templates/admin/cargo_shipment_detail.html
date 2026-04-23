@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cargo Shipment - Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <div class="flex justify-between items-center mb-6">
+            <div>
+                <a href="/admin/cargo-shipments" class="text-blue-500 hover:underline">← Back to Shipments</a>
+                <h1 class="text-2xl font-bold mt-2">Manage Shipment</h1>
+            </div>
+            <a href="/admin/logout" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex justify-between items-start mb-6">
+                <div>
+                    <p class="text-sm text-gray-500">Tracking Number</p>
+                    <p class="text-xl font-mono font-bold">{{ shipment.tracking_number }}</p>
+                </div>
+                <div class="px-3 py-1 rounded-full text-sm 
+                    {% if shipment.status == 'pending' %}bg-yellow-100 text-yellow-800
+                    {% elif shipment.status == 'processing' %}bg-blue-100 text-blue-800
+                    {% elif shipment.status == 'in_transit' %}bg-purple-100 text-purple-800
+                    {% elif shipment.status == 'out_for_delivery' %}bg-orange-100 text-orange-800
+                    {% elif shipment.status == 'delivered' %}bg-green-100 text-green-800
+                    {% else %}bg-gray-100 text-gray-800{% endif %}">
+                    {{ shipment.status|replace('_', ' ')|title }}
+                </div>
+            </div>
+            
+            <!-- Update Form -->
+            <form method="POST" action="/admin/cargo-shipments/update/{{ shipment.id }}" class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Status</label>
+                        <select name="status" class="w-full p-2 border rounded">
+                            <option value="pending" {% if shipment.status == 'pending' %}selected{% endif %}>Pending</option>
+                            <option value="processing" {% if shipment.status == 'processing' %}selected{% endif %}>Processing</option>
+                            <option value="in_transit" {% if shipment.status == 'in_transit' %}selected{% endif %}>In Transit</option>
+                            <option value="out_for_delivery" {% if shipment.status == 'out_for_delivery' %}selected{% endif %}>Out for Delivery</option>
+                            <option value="delivered" {% if shipment.status == 'delivered' %}selected{% endif %}>Delivered</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Current Location</label>
+                        <input type="text" name="current_location" value="{{ shipment.current_location or '' }}" 
+                               class="w-full p-2 border rounded" placeholder="e.g., Yangon Hub, In Transit">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Tracking Number</label>
+                        <input type="text" name="tracking_number" value="{{ shipment.tracking_number }}" 
+                               class="w-full p-2 border rounded">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Final Price (MMK)</label>
+                        <input type="number" name="actual_price" value="{{ shipment.actual_price or '' }}" 
+                               class="w-full p-2 border rounded">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Estimated Delivery Date</label>
+                        <input type="date" name="estimated_delivery" value="{{ shipment.estimated_delivery or '' }}" 
+                               class="w-full p-2 border rounded">
+                    </div>
+                </div>
+                
+                <div class="flex justify-end">
+                    <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
+                        <i class="fas fa-save"></i> Update Shipment
+                    </button>
+                </div>
+            </form>
+            
+            <!-- Shipment Details -->
+            <div class="mt-6 pt-4 border-t">
+                <h3 class="font-semibold mb-3">Shipment Information</h3>
+                <div class="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                        <p><span class="text-gray-500">Customer:</span> {{ shipment.customer_name }}</p>
+                        <p><span class="text-gray-500">Email:</span> {{ shipment.customer_email }}</p>
+                        <p><span class="text-gray-500">Phone:</span> {{ shipment.customer_phone }}</p>
+                    </div>
+                    <div>
+                        <p><span class="text-gray-500">Direction:</span> 
+                            {% if shipment.direction == 'vietnam-to-myanmar' %}
+                            🇻🇳 Vietnam → 🇲🇲 Myanmar
+                            {% else %}
+                            🇲🇲 Myanmar → 🇻🇳 Vietnam
+                            {% endif %}
+                        </p>
+                        <p><span class="text-gray-500">Route:</span> {{ shipment.from_city }} → {{ shipment.to_city }}</p>
+                        <p><span class="text-gray-500">Weight:</span> {{ shipment.weight }} kg</p>
+                        <p><span class="text-gray-500">Package Type:</span> {{ shipment.package_type|title }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

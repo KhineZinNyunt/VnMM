@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Air Cargo Service - Vietnam-Myanmar Shop</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        .service-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+        }
+    </style>
+    <script>
+        // City data
+        const vietnamCities = [
+            "Ho Chi Minh City",
+            "Hanoi",
+            "Da Nang",
+            "Hai Phong",
+            "Can Tho",
+            "Nha Trang",
+            "Da Lat",
+            "Hue",
+            "Vung Tau",
+            "Quy Nhon"
+        ];
+        
+        const myanmarCities = [
+            "Yangon",
+            "Mandalay",
+            "Naypyidaw",
+            "Bago",
+            "Mawlamyine",
+            "Taunggyi",
+            "Sittwe",
+            "Pathein",
+            "Pyin Oo Lwin",
+            "Myeik"
+        ];
+        
+        function updateCities() {
+            const direction = document.getElementById('direction').value;
+            const fromCitySelect = document.getElementById('from_city');
+            const toCitySelect = document.getElementById('to_city');
+            
+            if (direction === 'vietnam-to-myanmar') {
+                // From Vietnam, To Myanmar
+                fromCitySelect.innerHTML = '<option value="">Select From City</option>' + 
+                    vietnamCities.map(city => `<option value="${city}">${city}</option>`).join('');
+                toCitySelect.innerHTML = '<option value="">Select To City</option>' + 
+                    myanmarCities.map(city => `<option value="${city}">${city}</option>`).join('');
+            } else if (direction === 'myanmar-to-vietnam') {
+                // From Myanmar, To Vietnam
+                fromCitySelect.innerHTML = '<option value="">Select From City</option>' + 
+                    myanmarCities.map(city => `<option value="${city}">${city}</option>`).join('');
+                toCitySelect.innerHTML = '<option value="">Select To City</option>' + 
+                    vietnamCities.map(city => `<option value="${city}">${city}</option>`).join('');
+            } else {
+                // No direction selected
+                fromCitySelect.innerHTML = '<option value="">Select direction first</option>';
+                toCitySelect.innerHTML = '<option value="">Select direction first</option>';
+            }
+        }
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const directionSelect = document.getElementById('direction');
+            if (directionSelect) {
+                directionSelect.addEventListener('change', updateCities);
+            }
+        });
+    </script>
+</head>
+<body class="bg-gray-50">
+
+<!-- Header -->
+<header class="bg-white shadow-sm sticky top-0 z-50">
+    <div class="container mx-auto px-4 py-3">
+        <div class="flex justify-between items-center">
+            <a href="/" class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-store text-white text-sm"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold text-gray-800">Vietnam Myanmar Shop</h1>
+                    <p class="text-xs text-gray-400">Cross-Border Marketplace</p>
+                </div>
+            </a>
+            
+            <div class="flex items-center gap-4 text-sm">
+                {% if session.customer_name %}
+                    <div class="flex items-center gap-2">
+                        {% if session.profile_image %}
+                        <img src="{{ session.profile_image }}" alt="Profile" class="w-8 h-8 rounded-full object-cover">
+                        {% else %}
+                        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-user text-blue-600 text-sm"></i>
+                        </div>
+                        {% endif %}
+                        <span class="text-gray-700 font-medium">Hi, {{ session.customer_name.split()[0] }}</span>
+                    </div>
+                    <a href="/account" class="text-gray-600 hover:text-gray-800">
+                        <i class="fas fa-user-circle"></i> Account
+                    </a>
+                    <a href="/logout" class="text-gray-600 hover:text-red-600">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                {% else %}
+                    <a href="/login" class="text-gray-600 hover:text-gray-800">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </a>
+                    <a href="/register" class="bg-blue-600 text-white px-3 py-1.5 rounded-md hover:bg-blue-700">
+                        <i class="fas fa-user-plus"></i> Register
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Hero -->
+<div class="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-12">
+    <div class="container mx-auto px-4 text-center">
+        <i class="fas fa-plane text-5xl mb-4"></i>
+        <h1 class="text-4xl font-bold mb-3">Air Cargo Service</h1>
+        <p class="text-xl mb-2">Fast & Reliable Delivery Between Vietnam and Myanmar</p>
+        <p class="text-blue-100">3-5 days delivery • Real-time tracking • Competitive rates</p>
+    </div>
+</div>
+
+<div class="container mx-auto px-4 py-12">
+    
+    <!-- Login Warning -->
+    {% if not session.customer_name %}
+    <div class="bg-yellow-50 border-l-4 border-yellow-500 rounded-lg p-4 mb-8">
+        <div class="flex items-center">
+            <i class="fas fa-exclamation-triangle text-yellow-600 mr-3"></i>
+            <div>
+                <p class="text-yellow-800 font-medium">Please login to request a shipping quote</p>
+                <p class="text-yellow-600 text-sm">Login or create an account to use our cargo service.</p>
+            </div>
+            <a href="/login" class="ml-auto bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600">Login</a>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Service Features -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+        <div class="bg-white rounded-xl shadow-md p-6 text-center service-card">
+            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-tachometer-alt text-blue-600 text-2xl"></i>
+            </div>
+            <h3 class="text-lg font-bold mb-2">Fast Delivery</h3>
+            <p class="text-gray-500 text-sm">3-5 days delivery time</p>
+        </div>
+        
+        <div class="bg-white rounded-xl shadow-md p-6 text-center service-card">
+            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-map-marker-alt text-blue-600 text-2xl"></i>
+            </div>
+            <h3 class="text-lg font-bold mb-2">Real-time Tracking</h3>
+            <p class="text-gray-500 text-sm">Track your package</p>
+        </div>
+        
+        <div class="bg-white rounded-xl shadow-md p-6 text-center service-card">
+            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-shield-alt text-blue-600 text-2xl"></i>
+            </div>
+            <h3 class="text-lg font-bold mb-2">Insured Shipments</h3>
+            <p class="text-gray-500 text-sm">Fully insured</p>
+        </div>
+    </div>
+    
+    <!-- Pricing Table -->
+    <div class="bg-white rounded-xl shadow-md overflow-hidden mb-12">
+        <div class="bg-gray-50 px-6 py-4 border-b">
+            <h2 class="text-xl font-bold">Shipping Rates</h2>
+            <p class="text-gray-500 text-sm">Prices are per kilogram (MMK)</p>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="text-left py-3 px-6">Weight Range</th>
+                        <th class="text-left py-3 px-6">Vietnam → Myanmar</th>
+                        <th class="text-left py-3 px-6">Myanmar → Vietnam</th>
+                        <th class="text-left py-3 px-6">Estimated Time</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y">
+                    <tr class="hover:bg-gray-50">
+                        <td class="py-3 px-6 font-medium">1-5 kg</td>
+                        <td class="py-3 px-6">12,000 MMK/kg</td>
+                        <td class="py-3 px-6">10,000 MMK/kg</td>
+                        <td class="py-3 px-6">3-4 days</td>
+                    </tr>
+                    <tr class="hover:bg-gray-50">
+                        <td class="py-3 px-6 font-medium">6-20 kg</td>
+                        <td class="py-3 px-6">10,000 MMK/kg</td>
+                        <td class="py-3 px-6">8,500 MMK/kg</td>
+                        <td class="py-3 px-6">4-5 days</td>
+                    </tr>
+                    <tr class="hover:bg-gray-50">
+                        <td class="py-3 px-6 font-medium">21-50 kg</td>
+                        <td class="py-3 px-6">8,500 MMK/kg</td>
+                        <td class="py-3 px-6">7,000 MMK/kg</td>
+                        <td class="py-3 px-6">4-5 days</td>
+                    </tr>
+                    <tr class="hover:bg-gray-50">
+                        <td class="py-3 px-6 font-medium">50+ kg</td>
+                        <td class="py-3 px-6 text-blue-600 font-semibold">Contact for quote</td>
+                        <td class="py-3 px-6 text-blue-600 font-semibold">Contact for quote</td>
+                        <td class="py-3 px-6">5-7 days</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Request Form -->
+    <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+        <h2 class="text-xl font-bold mb-2">Request a Shipping Quote</h2>
+        <p class="text-gray-500 mb-6">Fill in your shipment details. Your account information will be used automatically.</p>
+        
+        {% if session.customer_name %}
+        <form method="POST" action="/cargo-request" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Direction *</label>
+                <select name="direction" id="direction" required class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                    <option value="">Select Direction</option>
+                    <option value="vietnam-to-myanmar">Vietnam → Myanmar</option>
+                    <option value="myanmar-to-vietnam">Myanmar → Vietnam</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">From City *</label>
+                <select name="from_city" id="from_city" required class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                    <option value="">Select direction first</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">To City *</label>
+                <select name="to_city" id="to_city" required class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                    <option value="">Select direction first</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Weight (kg) *</label>
+                <input type="number" name="weight" step="0.1" required class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Package Type *</label>
+                <select name="package_type" required class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                    <option value="">Select Package Type</option>
+                    <option value="documents">Documents</option>
+                    <option value="clothing">Clothing</option>
+                    <option value="electronics">Electronics</option>
+                    <option value="food">Food</option>
+                    <option value="gifts">Gifts</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Additional Information</label>
+                <textarea name="message" rows="3" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Any special instructions or notes..."></textarea>
+            </div>
+            <div class="md:col-span-2">
+                <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition font-semibold">
+                    <i class="fas fa-paper-plane mr-2"></i> Request Quote
+                </button>
+            </div>
+        </form>
+        {% else %}
+        <div class="text-center py-8">
+            <i class="fas fa-lock text-4xl text-gray-400 mb-3"></i>
+            <p class="text-gray-500">Please login to request a shipping quote</p>
+            <a href="/login" class="inline-block mt-3 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">Login Now</a>
+        </div>
+        {% endif %}
+    </div>
+    
+    <!-- Service Areas List -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+        <div class="bg-white rounded-xl shadow-md p-6">
+            <h3 class="text-lg font-bold mb-3">🇻🇳 Vietnam Cities</h3>
+            <div class="grid grid-cols-2 gap-2 text-sm text-gray-600">
+                {% for city in ["Ho Chi Minh City", "Hanoi", "Da Nang", "Hai Phong", "Can Tho", "Nha Trang", "Da Lat", "Hue", "Vung Tau", "Quy Nhon"] %}
+                <li class="list-none"><i class="fas fa-check-circle text-green-500 mr-1 text-xs"></i> {{ city }}</li>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-xl shadow-md p-6">
+            <h3 class="text-lg font-bold mb-3">🇲🇲 Myanmar Cities</h3>
+            <div class="grid grid-cols-2 gap-2 text-sm text-gray-600">
+                {% for city in ["Yangon", "Mandalay", "Naypyidaw", "Bago", "Mawlamyine", "Taunggyi", "Sittwe", "Pathein", "Pyin Oo Lwin", "Myeik"] %}
+                <li class="list-none"><i class="fas fa-check-circle text-green-500 mr-1 text-xs"></i> {{ city }}</li>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Contact Info -->
+    <div class="bg-gray-100 rounded-xl p-6 text-center">
+        <p class="text-gray-600">
+            <i class="fas fa-phone mr-2 text-blue-600"></i> Need immediate assistance? 
+            Call us: <span class="font-semibold">+95 9 xxx xxx xxx</span> (Myanmar) / 
+            <span class="font-semibold">+84 xxx xxx xxx</span> (Vietnam)
+        </p>
+        <p class="text-gray-500 text-sm mt-2">
+            <i class="fas fa-envelope mr-1"></i> Email: cargo@vietmyan.com
+        </p>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="bg-gray-800 text-white mt-8 py-6 text-center text-sm text-gray-400">
+    <p>© 2025 Vietnam-Myanmar Shop. All rights reserved.</p>
+</footer>
+
+</body>
+</html>

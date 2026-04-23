@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Request Confirmation - Vietnam-Myanmar Shop</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-16 max-w-2xl">
+        <div class="bg-white rounded-xl shadow-md p-8 text-center">
+            <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-check-circle text-green-600 text-4xl"></i>
+            </div>
+            
+            <h1 class="text-2xl font-bold text-gray-800 mb-2">Request Submitted Successfully!</h1>
+            <p class="text-gray-500 mb-6">Thank you for choosing our air cargo service.</p>
+            
+            <div class="bg-gray-50 rounded-lg p-4 mb-6 text-left">
+                <p class="text-sm text-gray-500">Request Number</p>
+                <p class="text-lg font-mono font-bold text-blue-600">{{ request.request_number }}</p>
+                
+                <div class="grid grid-cols-2 gap-4 mt-4">
+                    <div>
+                        <p class="text-xs text-gray-400">Estimated Price</p>
+                        <p class="font-semibold">{{ "%.0f"|format(request.estimated_price) }} MMK</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-400">Direction</p>
+                        <p class="font-semibold">
+                            {% if request.direction == 'vietnam-to-myanmar' %}
+                            🇻🇳 Vietnam → 🇲🇲 Myanmar
+                            {% else %}
+                            🇲🇲 Myanmar → 🇻🇳 Vietnam
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-yellow-50 rounded-lg p-4 mb-6 text-left">
+                <p class="text-sm font-semibold text-yellow-800 mb-2">What happens next?</p>
+                <ul class="text-sm text-gray-600 space-y-2">
+                    <li><i class="fas fa-envelope text-yellow-600 mr-2"></i> We'll send a confirmation email within 24 hours</li>
+                    <li><i class="fas fa-phone text-yellow-600 mr-2"></i> Our team will contact you with the final quote</li>
+                    <li><i class="fas fa-truck text-yellow-600 mr-2"></i> Schedule pickup after payment confirmation</li>
+                </ul>
+            </div>
+            
+            <div class="flex gap-3 justify-center">
+                <a href="/cargo" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
+                    New Request
+                </a>
+                <a href="/" class="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-300">
+                    Back to Home
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

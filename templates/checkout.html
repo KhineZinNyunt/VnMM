@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Vietnam-Myanmar Shop</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+
+<!-- Header -->
+<header class="bg-white shadow-sm sticky top-0 z-50">
+    <div class="container mx-auto px-4 py-3">
+        <div class="flex justify-between items-center">
+            <a href="/" class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-store text-white text-sm"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold text-gray-800">Vietnam Myanmar Shop</h1>
+                    <p class="text-xs text-gray-400">Cross-Border Marketplace</p>
+                </div>
+            </a>
+            
+            <div class="flex items-center gap-4 text-sm">
+                <a href="/cart" class="relative text-gray-600 hover:text-gray-800">
+                    <i class="fas fa-shopping-cart text-lg"></i>
+                </a>
+                
+                {% if session.customer_name %}
+                    <span class="text-gray-700">Hi, {{ session.customer_name.split()[0] }}</span>
+                    <a href="/account" class="text-gray-600 hover:text-gray-800">Account</a>
+                    <a href="/logout" class="text-gray-600 hover:text-red-600">Logout</a>
+                {% else %}
+                    <a href="/login" class="text-gray-600 hover:text-gray-800">Login</a>
+                    <a href="/register" class="bg-blue-600 text-white px-3 py-1.5 rounded-md hover:bg-blue-700">Register</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="container mx-auto px-4 py-8 max-w-6xl">
+    <h1 class="text-3xl font-bold text-gray-800 mb-8">Checkout</h1>
+    
+    <div class="flex flex-col lg:flex-row gap-8">
+        
+        <!-- Checkout Form -->
+        <div class="flex-1">
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <h2 class="text-xl font-bold mb-4">Shipping Information</h2>
+                
+                <form id="checkoutForm" method="POST" action="/submit-order">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
+                            <input type="text" name="full_name" value="{{ session.customer_name }}" required class="w-full p-2 border rounded-lg">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+                            <input type="email" name="email" value="{{ session.customer_email }}" required class="w-full p-2 border rounded-lg">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Phone *</label>
+                            <input type="tel" name="phone" required class="w-full p-2 border rounded-lg">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">City *</label>
+                            <input type="text" name="city" required class="w-full p-2 border rounded-lg">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Address *</label>
+                            <textarea name="address" rows="2" required class="w-full p-2 border rounded-lg"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Country *</label>
+                            <select name="country" required class="w-full p-2 border rounded-lg">
+                                <option value="">Select Country</option>
+                                <option value="myanmar">Myanmar</option>
+                                <option value="vietnam">Vietnam</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Payment Method *</label>
+                            <select name="payment_method" required class="w-full p-2 border rounded-lg">
+                                <option value="">Select Payment Method</option>
+                                <option value="kbz">KBZ Pay</option>
+                                <option value="wave">Wave Money</option>
+                                <option value="vietqr">VietQR</option>
+                                <option value="bank">Bank Transfer</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <input type="hidden" name="cart_data" id="cartData">
+                    
+                    <button type="submit" id="placeOrderBtn" class="w-full mt-6 bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 transition font-semibold">
+                        Place Order
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Order Summary -->
+        <div class="lg:w-96">
+            <div class="bg-white rounded-xl shadow-md p-6 sticky top-24">
+                <h2 class="text-xl font-bold mb-4">Order Summary</h2>
+                <div id="orderItems" class="space-y-3 max-h-96 overflow-y-auto">
+                    <div class="text-center text-gray-500 py-4">Loading cart items...</div>
+                </div>
+                <div class="border-t pt-4 mt-4">
+                    <div class="flex justify-between text-lg font-bold">
+                        <span>Total</span>
+                        <span id="orderTotal" class="text-red-600">0 MMK</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="bg-gray-800 text-white mt-12 py-6 text-center text-sm text-gray-400">
+    <p>© 2025 Vietnam-Myanmar Shop. All rights reserved.</p>
+</footer>
+
+<script>
+    async function loadCart() {
+        try {
+            const response = await fetch('/get-cart-items');
+            const data = await response.json();
+            
+            const orderItemsDiv = document.getElementById('orderItems');
+            const orderTotalSpan = document.getElementById('orderTotal');
+            
+            if (data.items && data.items.length > 0) {
+                let total = 0;
+                orderItemsDiv.innerHTML = data.items.map(item => {
+                    const imageUrl = item.product_image && item.product_image !== '' ? item.product_image : 'https://via.placeholder.com/64?text=No+Image';
+                    return `
+                        <div class="flex gap-3 border-b pb-3">
+                            <img src="${imageUrl}" class="w-16 h-16 object-cover rounded" onerror="this.src='https://via.placeholder.com/64?text=No+Image'">
+                            <div class="flex-1">
+                                <p class="font-semibold">${item.product_name}</p>
+                                <p class="text-sm text-gray-500">Size: ${item.size} / Color: ${item.color}</p>
+                                <p class="text-sm">Qty: ${item.quantity}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="font-bold">${(item.product_price * item.quantity).toLocaleString()} MMK</p>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                total = data.items.reduce((sum, item) => sum + (item.product_price * item.quantity), 0);
+                orderTotalSpan.textContent = total.toLocaleString() + ' MMK';
+                
+                // Set cart data
+                const cartDataValue = JSON.stringify(data.items);
+                document.getElementById('cartData').value = cartDataValue;
+                console.log('Cart data set:', cartDataValue);
+            } else {
+                orderItemsDiv.innerHTML = '<div class="text-center text-gray-500 py-4">Your cart is empty</div>';
+                orderTotalSpan.textContent = '0 MMK';
+                document.getElementById('cartData').value = '[]';
+            }
+        } catch (error) {
+            console.error('Error loading cart:', error);
+        }
+    }
+    
+    // Load cart when page loads
+    loadCart();
+</script>
+</body>
+</html>

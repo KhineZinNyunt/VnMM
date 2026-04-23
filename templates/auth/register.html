@@ -5,12 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register - Vietnam-Myanmar Shop</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        .flag-select {
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .flag-select:hover {
+            transform: scale(1.05);
+        }
+    </style>
 </head>
 <body class="bg-gray-100">
     <div class="container mx-auto px-4 py-8 max-w-md">
         <div class="bg-white rounded-lg shadow-md p-8">
             <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <i class="fas fa-user-plus text-white text-2xl"></i>
+                </div>
                 <h1 class="text-2xl font-bold">Create Account</h1>
                 <p class="text-gray-600">Join Vietnam-Myanmar Shop</p>
             </div>
@@ -19,6 +35,7 @@
                 {% if messages %}
                     {% for category, message in messages %}
                         <div class="mb-4 p-3 rounded {% if 'success' in category %}bg-green-100 text-green-700{% else %}bg-red-100 text-red-700{% endif %}">
+                            <i class="fas fa-{% if 'success' in category %}check-circle{% else %}exclamation-circle{% endif %} mr-2"></i>
                             {{ message }}
                         </div>
                     {% endfor %}
@@ -26,34 +43,128 @@
             {% endwith %}
             
             <form method="POST">
+                <!-- Full Name -->
                 <div class="mb-4">
-                    <label class="block text-gray-700 mb-2">Full Name *</label>
+                    <label class="block text-gray-700 mb-2 font-medium">
+                        <i class="fas fa-user text-blue-500 mr-2"></i>Full Name *
+                    </label>
                     <input type="text" name="full_name" required 
-                           class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                           class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           placeholder="Enter your full name">
                 </div>
+                
+                <!-- Email -->
                 <div class="mb-4">
-                    <label class="block text-gray-700 mb-2">Email *</label>
+                    <label class="block text-gray-700 mb-2 font-medium">
+                        <i class="fas fa-envelope text-blue-500 mr-2"></i>Email *
+                    </label>
                     <input type="email" name="email" required 
-                           class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                           class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           placeholder="your@email.com">
                 </div>
+                
+                <!-- Phone Number with Country Code -->
                 <div class="mb-4">
-                    <label class="block text-gray-700 mb-2">Phone</label>
-                    <input type="tel" name="phone" 
-                           class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <label class="block text-gray-700 mb-2 font-medium">
+                        <i class="fas fa-phone text-blue-500 mr-2"></i>Phone Number *
+                    </label>
+                    <div class="flex gap-2">
+                        <select name="country_code" required class="w-32 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+                            <option value="+95">🇲🇲 +95 (Myanmar)</option>
+                            <option value="+84">🇻🇳 +84 (Vietnam)</option>
+                            <option value="+1">🇺🇸 +1 (USA)</option>
+                            <option value="+44">🇬🇧 +44 (UK)</option>
+                            <option value="+86">🇨🇳 +86 (China)</option>
+                            <option value="+65">🇸🇬 +65 (Singapore)</option>
+                            <option value="+66">🇹🇭 +66 (Thailand)</option>
+                            <option value="+60">🇲🇾 +60 (Malaysia)</option>
+                            <option value="+81">🇯🇵 +81 (Japan)</option>
+                            <option value="+82">🇰🇷 +82 (Korea)</option>
+                            <option value="+61">🇦🇺 +61 (Australia)</option>
+                            <option value="+33">🇫🇷 +33 (France)</option>
+                            <option value="+49">🇩🇪 +49 (Germany)</option>
+                        </select>
+                        <input type="tel" name="phone" required 
+                               class="flex-1 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                               placeholder="9 123 456 789">
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">Format: Without leading zero (e.g., 9 123 456 789)</p>
                 </div>
-                <div class="mb-6">
-                    <label class="block text-gray-700 mb-2">Password *</label>
+                
+                <!-- Address -->
+                <div class="mb-4">
+                    <label class="block text-gray-700 mb-2 font-medium">
+                        <i class="fas fa-map-marker-alt text-blue-500 mr-2"></i>Address *
+                    </label>
+                    <textarea name="address" rows="2" required 
+                              class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              placeholder="Street address, building, apartment"></textarea>
+                </div>
+                
+                <!-- City -->
+                <div class="mb-4">
+                    <label class="block text-gray-700 mb-2 font-medium">
+                        <i class="fas fa-city text-blue-500 mr-2"></i>City *
+                    </label>
+                    <input type="text" name="city" required 
+                           class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           placeholder="e.g., Yangon, Mandalay, Ho Chi Minh City">
+                </div>
+                
+                <!-- Country -->
+                <div class="mb-4">
+                    <label class="block text-gray-700 mb-2 font-medium">
+                        <i class="fas fa-globe text-blue-500 mr-2"></i>Country *
+                    </label>
+                    <select name="country" required class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+                        <option value="">Select Country</option>
+                        <option value="myanmar">🇲🇲 Myanmar</option>
+                        <option value="vietnam">🇻🇳 Vietnam</option>
+                        <option value="other">🌍 Other</option>
+                    </select>
+                </div>
+                
+                <!-- Password -->
+                <div class="mb-4">
+                    <label class="block text-gray-700 mb-2 font-medium">
+                        <i class="fas fa-lock text-blue-500 mr-2"></i>Password *
+                    </label>
                     <input type="password" name="password" required 
-                           class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                           class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           placeholder="Minimum 6 characters">
+                    <p class="text-xs text-gray-500 mt-1">Use at least 6 characters</p>
                 </div>
-                <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600">
-                    Register
+                
+                <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg hover:shadow-lg transition font-semibold">
+                    <i class="fas fa-user-plus mr-2"></i> Create Account
                 </button>
             </form>
-            <p class="text-center text-gray-600 mt-4">
+            
+            <p class="text-center text-gray-600 mt-6">
                 Already have an account? <a href="/login" class="text-blue-500 hover:underline">Login</a>
             </p>
         </div>
+        
+        <!-- Info Box -->
+        <div class="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <p class="text-sm text-gray-600">
+                <i class="fas fa-info-circle text-blue-500 mr-2"></i>
+                Your phone number helps us contact you about your orders.
+            </p>
+        </div>
     </div>
+    
+    <script>
+        // Auto-format phone number as user types
+        document.querySelector('input[name="phone"]').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 3 && value.length <= 6) {
+                value = value.slice(0, 3) + ' ' + value.slice(3);
+            } else if (value.length > 6) {
+                value = value.slice(0, 3) + ' ' + value.slice(3, 6) + ' ' + value.slice(6, 10);
+            }
+            e.target.value = value;
+        });
+    </script>
 </body>
 </html>

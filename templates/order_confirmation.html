@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation - Vietnam-Myanmar Shop</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-16 max-w-2xl">
+        <div class="bg-white rounded-xl shadow-md p-8 text-center">
+            <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-check-circle text-green-600 text-4xl"></i>
+            </div>
+            
+            <h1 class="text-2xl font-bold text-gray-800 mb-2">Order Placed Successfully!</h1>
+            <p class="text-gray-500 mb-6">Thank you for your purchase.</p>
+            
+            <div class="bg-gray-50 rounded-lg p-4 mb-6 text-left">
+                <p class="text-sm text-gray-500">Order Number</p>
+                <p class="text-lg font-mono font-bold text-blue-600">{{ order.order_number }}</p>
+                
+                <div class="grid grid-cols-2 gap-4 mt-4">
+                    <div>
+                        <p class="text-xs text-gray-400">Total Amount</p>
+                        <p class="font-semibold">{{ "%.0f"|format(order.total_amount) }} MMK</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-400">Payment Method</p>
+                        <p class="font-semibold">{{ order.payment_method|upper }}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-yellow-50 rounded-lg p-4 mb-6 text-left">
+                <p class="text-sm font-semibold text-yellow-800 mb-2">Payment Instructions</p>
+                <p class="text-sm text-gray-600">
+                    Please transfer payment to the following account and send the screenshot to our support.
+                </p>
+                <div class="mt-2 text-sm">
+                    <p><strong>KBZ Pay:</strong> 09-xxx-xxx-xxx</p>
+                    <p><strong>Wave Money:</strong> 09-xxx-xxx-xxx</p>
+                    <p><strong>VietQR:</strong> xxx-xxx-xxxx</p>
+                </div>
+            </div>
+            
+            <div class="flex gap-3 justify-center">
+                <a href="/" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
+                    Continue Shopping
+                </a>
+                <a href="/account" class="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-300">
+                    My Orders
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
